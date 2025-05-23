@@ -178,7 +178,7 @@ if (strlen($_SESSION['alogin']) == "") {
                         <td class="text-end"><?php echo number_format($results_p->total_fee, 2); ?></td>
                         <td class="text-end"><?php echo number_format($results_p->paid, 2); ?></td>
                         <td class="text-end"><?php echo number_format($results_p->balance, 2); ?></td>
-                        <td class="text-end"><?php echo number_format($result->paid, 2); ?></td>
+                        <td class="text-end" style="background-color: #fffbe6; font-weight: bold;"><?php echo number_format($result->paid, 2); ?></td>
                         <td><?php echo date("d-m-Y", strtotime($result->created)); ?></td>
                         <td class="text-center">
                             <?php if($_SESSION['user_type']!=1) { ?>
