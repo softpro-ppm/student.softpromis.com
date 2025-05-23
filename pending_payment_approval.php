@@ -158,15 +158,15 @@ if (strlen($_SESSION['alogin']) == "") {
                                     $results_c = $query_c->fetchAll(PDO::FETCH_OBJ);
 
                                     // Fetch job roll name
-                                    $jobroll_id = $results_c[0]->jobroll;
+                                    $jobroll_id = $results_c[0]->job_roll;
                                     $jobroll_name = '';
                                     if ($jobroll_id) {
-                                        $sql_j = "SELECT JobRoleName FROM tbljobroll WHERE JobrollId = :jobroll_id";
+                                        $sql_j = "SELECT jobrollname FROM tbljobroll WHERE JobrollId = :jobroll_id";
                                         $query_j = $dbh->prepare($sql_j);
                                         $query_j->bindParam(':jobroll_id', $jobroll_id, PDO::PARAM_INT);
                                         $query_j->execute();
                                         $result_j = $query_j->fetch(PDO::FETCH_OBJ);
-                                        $jobroll_name = $result_j ? $result_j->JobRoleName : '';
+                                        $jobroll_name = $result_j ? $result_j->jobrollname : '';
                                     }
 
                         ?>
