@@ -189,12 +189,19 @@ if(!empty($_POST["jobrollid_for_result"]))
 {
  $jobrollid=intval($_POST['jobrollid_for_result']);
  if(!is_numeric($jobrollid)){
- 
    echo htmlentities("invalid Class");
    exit;
  }
  else{
-   $sql = "SELECT tbltrainingcenter.trainingcentername,tblscheme.SchemeName,tblsector.SectorName,tbljobroll.jobrollname,tblbatch.* from tbltrainingcenter,tblscheme,tblsector,tbljobroll,tblbatch WHERE tblbatch.training_centre_id  = tbltrainingcenter.TrainingcenterId AND tblbatch.scheme_id = tblscheme.SchemeId AND tblbatch.sector_id = tblsector.SectorId AND tblbatch.job_roll_id = tbljobroll.JobrollId AND tblbatch.job_roll_id=:job_roll_id";
+   $sql = "SELECT tbltrainingcenter.trainingcentername,tblscheme.SchemeName,tblsector.SectorName,tbljobroll.jobrollname,tblbatch.*, (
+       SELECT COUNT(*) FROM tblcandidateresults WHERE tblcandidateresults.batch_id = tblbatch.id
+   ) as result_count
+   from tbltrainingcenter,tblscheme,tblsector,tbljobroll,tblbatch 
+   WHERE tblbatch.training_centre_id  = tbltrainingcenter.TrainingcenterId 
+   AND tblbatch.scheme_id = tblscheme.SchemeId 
+   AND tblbatch.sector_id = tblsector.SectorId 
+   AND tblbatch.job_roll_id = tbljobroll.JobrollId 
+   AND tblbatch.job_roll_id=:job_roll_id";
 $query = $dbh->prepare($sql);
 $query->bindParam(':job_roll_id',$jobrollid,PDO::PARAM_STR);
 $query->execute();
@@ -203,42 +210,32 @@ $cnt=1;
 if($query->rowCount() > 0)
 {
 foreach($results as $result)
-{   ?>
-                                                <tr>
-                                                    <td>
-                                                        <?php echo htmlentities($cnt);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->batch_name);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->jobrollname);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->SectorName);?>
-                                                    <td>
-                                                        <?php echo htmlentities($result->SchemeName);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->trainingcentername);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->start_date);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->end_date);?>
-                                                    </td>
-                                                    <td>
-                                                        <?php echo htmlentities($result->start_time);?>
-                                                    <td>
-                                                        <?php echo htmlentities($result->end_time);?>
-                                                    </td>
-                                                    <td>
-                                                        <a href="add-result-to-particular-batch.php?batchid=<?php echo htmlentities($result->id);?>">
-                                                        <span class="btn btn-primary">Add result</span> </a>
-                                                    </td>
-                                                </tr>
-                                                <?php $cnt=$cnt+1;}
+{   
+    $is_passed = (strtotime($result->end_date) < strtotime(date('Y-m-d')));
+    $has_result = ($result->result_count > 0);
+    $disabled = ($is_passed || $has_result) ? 'disabled style=\'background:#eee;pointer-events:none;opacity:0.6;\'' : '';
+?>
+<tr>
+    <td><?php echo htmlentities($cnt);?></td>
+    <td><?php echo htmlentities($result->batch_name);?></td>
+    <td><?php echo htmlentities($result->jobrollname);?></td>
+    <td><?php echo htmlentities($result->SectorName);?></td>
+    <td><?php echo htmlentities($result->SchemeName);?></td>
+    <td><?php echo htmlentities($result->trainingcentername);?></td>
+    <td><?php echo htmlentities($result->start_date);?></td>
+    <td><?php echo htmlentities($result->end_date);?></td>
+    <td><?php echo htmlentities($result->start_time);?></td>
+    <td><?php echo htmlentities($result->end_time);?></td>
+    <td>
+        <a href="add-result-to-particular-batch.php?batchid=<?php echo htmlentities($result->id);?>" <?php echo $disabled; ?>>
+            <span class="btn btn-primary">Add result</span>
+        </a>
+        <?php if($is_passed) { echo '<span class="badge bg-warning ms-2">Batch Passed</span>'; }
+              if($has_result) { echo '<span class="badge bg-info ms-2">Result Submitted</span>'; }
+        ?>
+    </td>
+</tr>
+<?php $cnt=$cnt+1;}
   }else{
     echo "No Batch to show";
   } 
