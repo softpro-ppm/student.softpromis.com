@@ -496,3 +496,52 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: 600;
 }
 </style>
+
+<style>
+/* Profile Dropdown Styles */
+.profile-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.profile-dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+.profile-dropdown-toggle:hover,
+.profile-dropdown-toggle:focus {
+    background: #f0f0f0;
+}
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    z-index: 1000;
+    padding: 0.5rem 0;
+}
+.profile-dropdown.open .profile-dropdown-menu {
+    display: block;
+}
+.profile-dropdown-menu a {
+    display: block;
+    padding: 0.5rem 1.5rem;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.profile-dropdown-menu a:hover {
+    background: #f8f9fa;
+    color: #007bff;
+}
+</style>
